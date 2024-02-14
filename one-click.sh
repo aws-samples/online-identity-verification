@@ -111,7 +111,7 @@ if [[ "`is_present cdk`" -eq "1" ]]; then
 fi
 
 color_green
-echo Passed.
+echo Install CDK Passed.
 echo
 
 export S3_REGION=${S3_REGION:-$(aws configure get region)}
@@ -134,7 +134,7 @@ then
 fi
 
 color_green
-echo Passed.
+echo Determine region Passed.
 echo
 
 echo "###########################################################"
@@ -177,7 +177,7 @@ export STACK_TEMPLATE_FILE=$BASE_DIR/cdk.out/$RFL_STACK_NAME.template.json
 mv $STACK_TEMPLATE_FILE $STACK_TEMPLATE_FILE.original
 
 color_green
-echo Passed.
+echo Synth the Deployment Passed.
 echo 
 
 echo "###########################################################"
@@ -206,7 +206,7 @@ do
       exit 1
     fi
   fi
-  zip -r ../$f.zip . > zip.log
+  zip -r ../$f.zip .  > zip.log
   color_green
   echo Zipped `wc -l zip.log | cut -d ' ' -f 1` files.
   color_reset
@@ -217,7 +217,7 @@ done
 
 
 color_green
-echo Passed.
+echo Zip the assets Passed.
 echo
 
 echo "###########################################################"
@@ -252,6 +252,7 @@ then
 fi 
 
 color_reset
+echo ACCOUNT_ID: ${ACCOUNT_ID}
 cdk bootstrap aws://${ACCOUNT_ID}/${S3_REGION}
 #npx cdk@2.1.0 bootstrap aws://${ACCOUNT_ID}/${S3_REGION}
 
@@ -265,7 +266,7 @@ if [[ "$?" -ne "0" ]]; then
 fi
 
 color_green
-echo Passed.
+echo CDK Boostrap Passed.
 echo
 
 
@@ -277,4 +278,4 @@ echo "===================================="
 color_reset
 
 
-CDK_REGION=S3_REGION cdk deploy -a ./app.py --require-approval never
+CDK_REGION=S3_REGION cdk deploy -v -a ./app.py --require-approval never

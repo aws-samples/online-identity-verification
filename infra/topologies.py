@@ -22,9 +22,13 @@ class DefaultRflStack(IRflStack):
     
     assert self.rfl_stack_name is not None
     
-  
+    # Create the cropface
+    from infra.cropface.topology import CropFace
+    cropface = CropFace(self,"RflCropFace",rfl_stack=self)
+
+
     # Create the FaceLiveness
-    faceliveness = FaceLiveness(self,'FaceLiveness', rfl_stack=self)
+    faceliveness = FaceLiveness(self,'FaceLiveness', rfl_stack=self, cropface=cropface)
 
 
     #Setup FE
@@ -33,12 +37,13 @@ class DefaultRflStack(IRflStack):
     from infra.frontend.topology import TriggerFrontEndBuild
     from infra.frontend.topology import FaceLivenessFrontEndBuildStatus
     from infra.frontend.cognito.topology import FaceLivenessCognito
+    
 
     # setup Amazon Cognito for Face Liveness
 
     cognito = FaceLivenessCognito(self,"RflCognito",rfl_stack=self )
 
-    feapp = FaceLivenessFrontEnd(self,"RflWebAPP",rfl_stack=self, apigateway=faceliveness.api_gateway, cognito= cognito)
+    feapp = FaceLivenessFrontEnd(self,"RflWebAPP",rfl_stack=self, apigateway=faceliveness.api_gateway, cognito=cognito)
 
     triggerfeapp = TriggerFrontEndBuild(self,"RflWebAPPTrigger",rfl_stack=self,amplifyApp=feapp)
     # feapp = RflFrontEnd(self,"RflWebAPP",rfl_stack=self)

@@ -1,5 +1,6 @@
 __pycache__
 cdk.out
+**/.vscode
 **/.vscode/launch.json
 cdk.context.json
 **/*.pem
@@ -55,3 +56,5 @@ amplify/team-provider-info.json
 
 .venv
 .env
+env.*
+*.template.json

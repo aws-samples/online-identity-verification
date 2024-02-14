@@ -78,7 +78,7 @@ class DefaultFunction(Construct):
       description='Python container lambda function for '+self.component_name,
       timeout= self.function_timeout,
       handler='handler.lambda_handler',
-      runtime= lambda_.Runtime.PYTHON_3_9,
+      runtime= lambda_.Runtime.PYTHON_3_12,
       tracing= lambda_.Tracing.ACTIVE,
       memory_size=512,
       environment=environment

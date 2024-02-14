@@ -31,7 +31,8 @@ class FaceLivenessFrontEnd(Construct):
         super().__init__(scope, id)
 
         s3_asset = s3_assets.Asset(self, "Rfl-Web-App-Code",
-                                   path="./src/frontend"
+                                   path="./src/frontend",
+                                   exclude=['**/.git/**']
                                    )
         self.appRrepo = codecommit.Repository(self, "Rfl-Web-App-Repo",
                                                     repository_name='{}-Repo'.format(
@@ -143,5 +144,5 @@ class FaceLivenessFrontEndBuildStatus(Construct):
                                                                           "Payload": input
                                                                       })
                                               )
-        CfnOutput(self, id="RFL-Web-App-URL",
-                  value="https://main."+amplifyApp.amplify.app_id+".amplifyapp.com", export_name="RFL-Web-App-URL")
+        CfnOutput(self, id="REACT-APP-ENV-API-URL",
+                  value="https://main."+amplifyApp.amplify.app_id+".amplifyapp.com", export_name="REACT-APP-ENV-API-URL" + rfl_stack.stack_name)

@@ -1,39 +1,28 @@
 import React from "react";
-import { useEffect } from "react";
-import { Loader } from '@aws-amplify/ui-react';
+import {
+    ToggleButtonGroup,
+    ToggleButton,
+} from '@aws-amplify/ui-react';
+import {  useState } from "react";
+
 import '@aws-amplify/ui-react/styles.css';
 import { FaceLivenessDetector } from '@aws-amplify/ui-react-liveness';
+import {dictionary} from './dictionary';
+console.log("dictionary.ja")
+console.log(dictionary.ja)
+console.log("dictionary.en")
+console.log(dictionary.en)
 
-
-function FaceLiveness({faceLivenessAnalysis}) {
-    const [loading, setLoading] = React.useState(true);
-    const [sessionId, setSessionId] = React.useState(null)
-   
+function FaceLiveness({ faceLivenessAnalysis, sessionid }) {
+    const [language, setLanguage] = useState('en');
 
     const endpoint = process.env.REACT_APP_ENV_API_URL ? process.env.REACT_APP_ENV_API_URL : ''
-
-    useEffect(() => {
-        /*
-         * API call to create the Face Liveness Session
-         */
-        const fetchCreateLiveness = async () => {
-            const response = await fetch(endpoint + 'createfacelivenesssession');
-            const data = await response.json();
-            setSessionId(data.sessionId)
-            setLoading(false);
-
-        };
-        fetchCreateLiveness();
-
-    },[])
+    const region = process.env.REACT_APP_REGION ? process.env.REACT_APP_REGION : "us-east-1"
 
     /*
-   * Get the Face Liveness Session Result
-   */
+    * Get the Face Liveness Session Result
+    */
     const handleAnalysisComplete = async () => {
-        /*
-         * API call to get the Face Liveness Session result
-         */
         const response = await fetch(endpoint + 'getfacelivenesssessionresults',
             {
                 method: 'POST',
@@ -41,7 +30,7 @@ function FaceLiveness({faceLivenessAnalysis}) {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ sessionid: sessionId })
+                body: JSON.stringify({ sessionid: sessionid })
             }
 
         );
@@ -51,18 +40,24 @@ function FaceLiveness({faceLivenessAnalysis}) {
 
     return (
         <>
-            {loading ? (
-                <Loader />
-            ) : (
-                <FaceLivenessDetector
-                    sessionId={sessionId}
-                    region="us-east-1"
-                    onAnalysisComplete={handleAnalysisComplete}
-                    onError={(error) => {
-                        console.error(error);
-                      }}
-                />
-            )}
+            <ToggleButtonGroup
+                value={language}
+                isExclusive
+                onChange={(value) => setLanguage(value)}
+            >
+                <ToggleButton value="en">English</ToggleButton>
+                <ToggleButton value="ja">日本語</ToggleButton>
+                <ToggleButton value="es">español</ToggleButton>
+            </ToggleButtonGroup>
+            <FaceLivenessDetector
+                sessionId={sessionid}
+                region={region}
+                displayText={dictionary[language]}
+                onAnalysisComplete={handleAnalysisComplete}
+                onError={(error) => {
+                    console.error(error);
+                }}
+            />
         </>
     );
 }

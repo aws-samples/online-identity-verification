@@ -1,4 +1,5 @@
 import boto3
+import os
 from logging import Logger
 
 rek_client = boto3.client('rekognition')
@@ -14,7 +15,11 @@ def create_session():
     '''
     Get liveness session.
     '''
+    logger.info('FACELIVENESS_BUCKET')
+    logger.info(os.getenv('FACELIVENESS_BUCKET'))
+    logger.info('FACELIVENESS_BUCKET')
     try:
+        
         response = rek_client.create_face_liveness_session()
         session_id = response.get("SessionId")
       

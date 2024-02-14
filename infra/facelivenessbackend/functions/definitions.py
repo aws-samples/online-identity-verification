@@ -34,9 +34,6 @@ class FaceLivenessBackendFunction(DefaultFunction):
     self.function.role.add_managed_policy(
       policy=iam.ManagedPolicy.from_aws_managed_policy_name('AmazonRekognitionFullAccess'))
 
-  
-
-
 
 class FaceLivenessStartLivenessSession(FaceLivenessBackendFunction):
   def __init__(self, scope: Construct, id:str, rfl_stack:IRflStack,env:Mapping[str,str]={}, **kwargs) -> None:
@@ -54,6 +51,9 @@ class FaceLivenessSessionResult(FaceLivenessBackendFunction):
   def __init__(self, scope: Construct, id:str, rfl_stack:IRflStack,env:Mapping[str,str]={}, **kwargs) -> None:
     super().__init__(scope, id, rfl_stack=rfl_stack, env=env)
 
+    self.function.role.add_managed_policy(
+      policy=iam.ManagedPolicy.from_aws_managed_policy_name('AmazonS3FullAccess'))
+
   @property
   def source_directory(self)->str:
     return 'src/backend/liveness-session-result'
@@ -61,4 +61,47 @@ class FaceLivenessSessionResult(FaceLivenessBackendFunction):
   @property
   def component_name(self)->str:
     return 'FaceLivenessSessionResult'
+
+
+
+class UploadSignUrl(FaceLivenessBackendFunction):
+  def __init__(self, scope: Construct, id:str, rfl_stack:IRflStack,env:Mapping[str,str]={}, **kwargs) -> None:
+    super().__init__(scope, id, rfl_stack=rfl_stack, env=env)
+    
+    '''
+    Attach any shared Amazon IAM policies here.
+    '''
+    self.function.role.add_managed_policy(
+      policy=iam.ManagedPolicy.from_aws_managed_policy_name('AmazonS3FullAccess'))
+
+
+  @property
+  def source_directory(self)->str:
+    return 'src/backend/upload-signed-url'
+
+  @property
+  def component_name(self)->str:
+    return 'UploadSignUrl'
+
+class GetComparefaceResult(FaceLivenessBackendFunction):
+  def __init__(self, scope: Construct, id:str, rfl_stack:IRflStack,env:Mapping[str,str]={}, **kwargs) -> None:
+    super().__init__(scope, id, rfl_stack=rfl_stack, env=env)
+    
+    '''
+    Attach any shared Amazon IAM policies here.
+    '''
+    self.function.role.add_managed_policy(
+      policy=iam.ManagedPolicy.from_aws_managed_policy_name('AmazonS3FullAccess'))
+
+    self.function.role.add_managed_policy(
+          policy=iam.ManagedPolicy.from_aws_managed_policy_name('AmazonRekognitionFullAccess'))
+    
+
+  @property
+  def source_directory(self)->str:
+    return 'src/backend/compareface'
+
+  @property
+  def component_name(self)->str:
+    return 'GetComparefaceResult'
 

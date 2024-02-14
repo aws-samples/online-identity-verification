@@ -5,10 +5,11 @@ import {
     Alert,
     Image,
     useTheme,
-    Button
+    Button,
+    ButtonGroup
 } from '@aws-amplify/ui-react';
 
-function ReferenceImage({ faceLivenessAnalysis , tryagain }) {
+function ReferenceImage({ faceLivenessAnalysis, tryagain, setTab }) {
     const { tokens } = useTheme();
     return (
         <>
@@ -34,8 +35,25 @@ function ReferenceImage({ faceLivenessAnalysis , tryagain }) {
             >
                 Confidence Score: {faceLivenessAnalysis.Confidence.toFixed(2)}%
             </Alert>
+            <ButtonGroup justifyContent="center" marginTop="1rem">
 
-            <Button variation="primary" type="submit" marginTop={tokens.space.large} marginBottom={tokens.space.large} onClick={tryagain}>Try Again</Button>
+                <Button variation="primary"
+                    colorTheme="overlay"
+                    type="submit"
+                    marginTop={tokens.space.large}
+                    marginBottom={tokens.space.large}
+                    onClick={tryagain}>
+                    Try Again
+                </Button>
+                <Button
+                    variation="primary"
+                    marginTop={tokens.space.large}
+                    marginBottom={tokens.space.large}
+                    onClick={() => {
+                        setTab('3')
+                    }}
+                >Next Step</Button>
+            </ButtonGroup>
 
             <Image
                 src={"data:image/jpeg;base64," + faceLivenessAnalysis.ReferenceImage.Bytes}

@@ -3,6 +3,7 @@ from infra.interfaces import IRflStack
 from constructs import Construct
 from os import path
 from aws_cdk import (
+    CfnOutput,
     aws_iam as iam,
     aws_cognito as cognito
 )
@@ -46,3 +47,13 @@ class FaceLivenessCognito(Construct):
 
         self.idpAttachment = cognito.CfnIdentityPoolRoleAttachment(
             self, 'RFL-IdentityPool-Role-Attachment', identity_pool_id=self.idp.ref, roles={"unauthenticated": self.unAuthrole.role_arn})
+        
+        CfnOutput(self, "REACT-APP-IDENTITYPOOL-ID",
+            value=self.idp.ref,
+            export_name="REACT-APP-IDENTITYPOOL-ID" + rfl_stack.stack_name)
+        CfnOutput(self, "REACT-APP-USERPOOL-ID",
+            value=self.cognito.user_pool_id,
+            export_name="REACT-APP-USERPOOL-ID" + rfl_stack.stack_name)
+        CfnOutput(self, "REACT-APP-WEBCLIENT-ID",
+            value=self.client.user_pool_client_id,
+            export_name="REACT-APP-WEBCLIENT-ID" + rfl_stack.stack_name)
