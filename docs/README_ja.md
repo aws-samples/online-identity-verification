@@ -24,10 +24,12 @@ aws configure
 
 ローカル環境にインストールするには、以下の手順が必要です。
 
-1. [Docker](https://www.docker.com/ja-jp/)をローカルにインストールし、Docker Daemonを実行します。
+1. [Docker](https://www.docker.com/ja-jp/)をローカルにインストールし、Docker Daemonを実行します(CDKのアセットバンドルに必要です)。
 1. 公式ドキュメンテーション[の説明](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html)に従ってAWS CDKをローカルにインストールします。
+    - **CDK CLIは最新に保ってください。** 本プロジェクトは`aws-cdk-lib`を比較的新しいバージョンに固定しています。CLIがライブラリより古いと`cdk synth`時に *"Cloud assembly schema version mismatch"* エラーが発生します。`npm install -g aws-cdk@latest`で更新してください(CLI >= 2.1132.0で動作確認済み)。
 1. [AWSアカウントにCDKを初期化](https://github.com/aws/aws-cdk/blob/master/design/cdk-bootstrap.md)します。
-1. [python.org](http://python.org/)からPython 3.6以降をインストールします。
+1. [python.org](http://python.org/)からPython(3.9以降、**3.13以下を推奨**)をインストールします。
+    - Python 3.14では現状virtualenvの作成に失敗します(`ensurepip`エラー)。Python 3.13以前を使用してください。例: `python3.13 -m venv .venv`
 1. Pythonの仮想環境を作成します。
   ```sh
   python3 -m venv .venv
@@ -59,6 +61,23 @@ export RFL_STACK_NAME=Rfl-Prod
 # このコマンドを実行すると、依存関係(brew、yum、aptが必要な場合)がインストールされます。
 # ローカルマシンの準備ができた後、環境にシンセサイズおよびデプロイされます。
 ./one-click.sh
+```
+
+> **リージョンに関する注意:** CDKはデプロイ先リージョンを、まず`AWS_REGION` / `AWS_DEFAULT_REGION`環境変数から解決し、次にプロファイルの`aws configure get region`にフォールバックします。意図しない値の`AWS_REGION`が設定されていると、そのリージョンにデプロイされます。デプロイ前に環境変数を解除するか、明示的にリージョンを指定してください:
+> ```sh
+> export CDK_DEFAULT_REGION=us-east-1
+> ```
+
+### one-click.shを使わない手動デプロイ(CDK直接実行)
+
+`one-click.sh`は対話式で、`awscliv2`(pipパッケージ)を前提としています。すでにAWS CLIとCDKが設定済みであれば、直接デプロイできます:
+
+```sh
+python3.13 -m venv .venv
+source .venv/bin/activate
+pip install -r infra/requirements.txt
+export RFL_STACK_NAME=Rfl-Dev            # 既存スタックを上書きしないよう別名を使用
+cdk deploy -a "python3 app.py" --require-approval never
 ```
 
 ## Amplifyアプリをローカルで実行するにはどうすればよいですか?
