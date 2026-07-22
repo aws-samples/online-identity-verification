@@ -27,10 +27,12 @@ aws configure
 
 Locally installing on a workstation requires the following steps. 
 
-1. Locally install [Docker](https://www.docker.com/ja-jp/) and Docker Daemon is running
+1. Locally install [Docker](https://www.docker.com/ja-jp/) and Docker Daemon is running (required for CDK asset bundling)
 1. Locally install AWS CDK as the [official documentation](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html) describes.
+    - **Keep the CDK CLI up to date.** This project pins `aws-cdk-lib` to a recent version. If the CLI is older than the library you will see a *"Cloud assembly schema version mismatch"* error during `cdk synth`. Upgrade with `npm install -g aws-cdk@latest` (CLI >= 2.1132.0 is known to work).
 1. [Bootstrap CDK for AWS Account](https://github.com/aws/aws-cdk/blob/master/design/cdk-bootstrap.md) 
-1. Install Python >=3.6 from [python.org](http://python.org/)
+1. Install Python (>=3.9, **<=3.13 recommended**) from [python.org](http://python.org/)
+    - Python 3.14 currently fails to create a virtualenv here (`ensurepip` error). Use Python 3.13 or earlier, e.g. `python3.13 -m venv .venv`.
 1. Create a Python virtual environment
   ```sh
   python3 -m venv .venv                                      
@@ -65,6 +67,23 @@ export RFL_STACK_NAME=Rfl-Prod
 # Running this command will install any dependencies (brew, yum, or apt required)
 # After preparing the local machine it will synthesize and deploy into your environment.
 ./one-click.sh
+```
+
+> **Note on region:** CDK resolves the target region from `AWS_REGION` / `AWS_DEFAULT_REGION` first, then falls back to the profile's `aws configure get region`. If an `AWS_REGION` env var is set to something other than what you intend, the stack deploys there. Unset it or export the region explicitly before deploying:
+> ```sh
+> export CDK_DEFAULT_REGION=us-east-1
+> ```
+
+### Deploying without one-click.sh (manual CDK)
+
+`one-click.sh` is interactive and assumes `awscliv2` (the pip package). If you already have the AWS CLI and CDK configured, you can deploy directly:
+
+```sh
+python3.13 -m venv .venv
+source .venv/bin/activate
+pip install -r infra/requirements.txt
+export RFL_STACK_NAME=Rfl-Dev            # use a distinct name to avoid clobbering an existing stack
+cdk deploy -a "python3 app.py" --require-approval never
 ```
 
 
